@@ -8,119 +8,195 @@ genai.configure(api_key=api_anahtarim)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 # 2. Sayfa Ayarları
-st.set_page_config(page_title="AI Pazarlama Asistanı", page_icon="✨", layout="centered")
+st.set_page_config(page_title="AI Marketing Pro", page_icon="⬛", layout="centered")
 
-# 3. YENİ: Gelişmiş VIP Tema ve Marka Kontrol Paneli (Sol Menü)
-st.sidebar.markdown("### 🎨 VIP Marka Ayarları")
-st.sidebar.write("Müşterinizin kurumsal kimliğine göre sistemi özelleştirin:")
+# 3. YENİ: Arayüz Dili Sözlüğü (Uygulamanın Kendi Dili)
+arayuz_dilleri = {
+    "Türkçe": {
+        "ayar_baslik": "⚙️ SİSTEM AYARLARI",
+        "arayuz_dili": "Arayüz Dili / App Language",
+        "tema_baslik": "⬛ KURUMSAL KİMLİK",
+        "logo": "Logo URL",
+        "arka_plan": "Arka Plan Görseli (URL)",
+        "renk_yazi": "Vurgu Rengi",
+        "baslik": "AI PAZARLAMA ASİSTANI",
+        "alt_baslik": "Kurumsal Yapay Zeka İçerik Motoru",
+        "foto_yukle": "📸 Ürün Görselini Yükleyin",
+        "hedef_pazar": "HEDEF PAZAR VE STRATEJİ",
+        "platform": "Yayın Platformu",
+        "ton": "Marka Ses Tonu",
+        "cikti_dili": "Çıktı Dili",
+        "urun_detay": "ÜRÜN BİLGİLERİ",
+        "urun_adi": "Ürün Adı",
+        "fiyat": "Etiket Fiyatı",
+        "ozellikler": "Teknik ve Estetik Özellikler",
+        "buton_uret": "METNİ OLUŞTUR",
+        "buton_indir": "DOSYAYI İNDİR",
+        "bekle": "Sistem analiz ediyor, lütfen bekleyin...",
+        "hata": "Lütfen ürün adı ve fiyat alanlarını doldurun.",
+        "basari": "İşlem Başarılı. Metin Hazır."
+    },
+    "English": {
+        "ayar_baslik": "⚙️ SYSTEM SETTINGS",
+        "arayuz_dili": "App Language / Arayüz Dili",
+        "tema_baslik": "⬛ BRAND IDENTITY",
+        "logo": "Logo URL",
+        "arka_plan": "Background Image URL",
+        "renk_yazi": "Accent Color",
+        "baslik": "AI MARKETING ASSISTANT",
+        "alt_baslik": "Enterprise AI Content Engine",
+        "foto_yukle": "📸 Upload Product Image",
+        "hedef_pazar": "TARGET MARKET & STRATEGY",
+        "platform": "Publishing Platform",
+        "ton": "Brand Voice",
+        "cikti_dili": "Output Language",
+        "urun_detay": "PRODUCT DETAILS",
+        "urun_adi": "Product Name",
+        "fiyat": "Listed Price",
+        "ozellikler": "Technical & Aesthetic Specs",
+        "buton_uret": "GENERATE CONTENT",
+        "buton_indir": "DOWNLOAD FILE",
+        "bekle": "System is analyzing, please wait...",
+        "hata": "Please fill in the product name and price fields.",
+        "basari": "Operation Successful. Content Ready."
+    }
+}
 
-# Logo ve Arka Plan Resmi (Link olarak)
-logo_linki = st.sidebar.text_input("Logo Linki (URL)", "https://cdn-icons-png.flaticon.com/512/3303/3303100.png")
-arkaplan_resmi = st.sidebar.text_input("Arka Plan Resmi Linki (URL)", placeholder="Örn: https://.../magaza.jpg")
+# Sol Menü - Arayüz Dili Seçimi
+st.sidebar.markdown("### 🌐 GLOBAL")
+secilen_arayuz = st.sidebar.selectbox("Arayüz Dili / App Language", ["Türkçe", "English"])
+dil = arayuz_dilleri[secilen_arayuz] # Seçilen dile göre kelimeleri çekiyoruz
 
-# Renk ve Yazı Tipi Seçiciler
-arkaplan_rengi = st.sidebar.color_picker("Arka Plan Rengi (Resim yoksa geçerlidir)", "#f8f9fa")
-yazi_rengi = st.sidebar.color_picker("Genel Yazı ve Başlık Rengi", "#2c3e50")
-yazi_tipi = st.sidebar.selectbox("Yazı Tipi (Font)", ["sans-serif", "serif", "monospace", "Arial", "Courier New"])
+# Sol Menü - Kurumsal Kimlik Ayarları
+st.sidebar.markdown(f"### {dil['tema_baslik']}")
+logo_linki = st.sidebar.text_input(dil['logo'], "https://cdn-icons-png.flaticon.com/512/3303/3303100.png")
+arkaplan_resmi = st.sidebar.text_input(dil['arka_plan'], placeholder="https://...")
+vurgu_rengi = st.sidebar.color_picker(dil['renk_yazi'], "#1a252f") # Varsayılan: Keskin koyu lacivert/gri
 
-# 4. Dinamik CSS (Tasarım) Enjeksiyonu
-# Eğer kullanıcı arka plan resmi girdiyse onu kullan, girmediyse seçilen rengi kullan
-bg_css = f"background-image: url('{arkaplan_resmi}'); background-size: cover; background-attachment: fixed; background-position: center;" if arkaplan_resmi else f"background-color: {arkaplan_rengi};"
+# 4. KESKİN, MODERN VE KURUMSAL CSS
+bg_css = f"background-image: url('{arkaplan_resmi}'); background-size: cover; background-attachment: fixed; background-position: center;" if arkaplan_resmi else f"background-color: #eaeced;"
 
 st.markdown(f"""
 <style>
-    /* Arka Plan Ayarı */
+    /* Keskin Arka Plan */
     .stApp {{
         {bg_css}
     }}
     
-    /* Genel Yazı Rengi ve Tipi Ayarı */
-    html, body, [class*="st-"], h1, h2, h3, p, label {{
-        font-family: {yazi_tipi} !important;
-        color: {yazi_rengi} !important;
+    /* Genel Font Ailesi: Modern, tırnaksız ve net */
+    html, body, [class*="st-"] {{
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     }}
     
-    /* İçeriklerin Arka Planda Okunabilmesi İçin Hafif Şeffaf Kutu */
+    /* İçerik Kutusu - Keskin Hatlar ve Kurumsal Çizgi */
     .block-container {{
-        background-color: rgba(255, 255, 255, 0.85);
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background-color: rgba(255, 255, 255, 0.96);
+        padding: 3rem;
+        border-radius: 0px; /* Yuvarlak hatlar iptal edildi, keskin yapıldı */
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
+        border-top: 6px solid {vurgu_rengi}; /* Üstte şık kurumsal renk çizgisi */
     }}
 
-    /* Buton Tasarımları */
+    /* Başlıklar */
+    h1 {{
+        color: {vurgu_rengi};
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 800;
+        font-size: 28px !important;
+    }}
+    h3 {{
+        color: #34495e;
+        font-size: 16px !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 8px;
+        margin-top: 20px;
+    }}
+
+    /* Keskin Aksiyon Butonu */
     div.stButton > button:first-child {{
-        background-color: #8b0000;
+        background-color: {vurgu_rengi};
         color: white !important;
-        border-radius: 8px;
+        border-radius: 0px; /* Keskin köşeler */
         border: none;
-        padding: 10px 24px;
-        font-size: 18px;
-        font-weight: bold;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 1px;
         width: 100%;
-        transition: all 0.3s;
+        transition: background-color 0.2s;
     }}
     div.stButton > button:first-child:hover {{
-        background-color: #a52a2a;
-        transform: scale(1.02);
+        background-color: #2c3e50;
+    }}
+    
+    /* Keskin İndirme Butonu */
+    div.stDownloadButton > button:first-child {{
+        background-color: #27ae60;
+        color: white;
+        border-radius: 0px;
+        font-weight: 600;
+        width: 100%;
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# 5. Logo ve Başlık
-col_logo, col_baslik = st.columns([1, 4])
+# 5. Logo ve Başlık Düzeni
+col_logo, col_baslik = st.columns([1, 6])
 with col_logo:
-    # Sol menüden girilen logo linkini buraya otomatik çeker
     if logo_linki:
-        st.image(logo_linki, width=100)
+        st.image(logo_linki, width=70)
 with col_baslik:
-    st.title("AI Pazarlama Asistanı")
-    st.markdown(f"<p style='color: {yazi_rengi}; font-size: 16px; margin-top: -15px;'>Kurumsal yapay zeka içerik üreticiniz.</p>", unsafe_allow_html=True)
+    st.markdown(f"<h1>{dil['baslik']}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: #7f8c8d; font-size: 14px; margin-top: -15px;'>{dil['alt_baslik']}</p>", unsafe_allow_html=True)
 
-st.markdown("---")
-
-# 6. Uygulamanın Ana Gövdesi (Resim Yükleme, Menüler vb.)
-yuklenen_fotograf = st.file_uploader("📸 Mobilyanın Fotoğrafını Yükleyin", type=["jpg", "jpeg", "png"])
+# 6. Uygulamanın Ana Gövdesi (Arayüz artık seçilen dile göre değişir)
+yuklenen_fotograf = st.file_uploader(dil['foto_yukle'], type=["jpg", "jpeg", "png"])
 resim = None
 if yuklenen_fotograf is not None:
     resim = Image.open(yuklenen_fotograf)
-    st.image(resim, caption="Analiz Edilecek Görsel", use_container_width=True)
+    st.image(resim, use_container_width=True)
 
+st.markdown(f"### {dil['hedef_pazar']}")
 col1, col2, col3 = st.columns(3)
 with col1:
-    platform = st.selectbox("Platform", ["Instagram Gönderisi", "WhatsApp", "Sahibinden/Web"])
+    platform = st.selectbox(dil['platform'], ["Instagram", "WhatsApp", "E-Commerce / Web"])
 with col2:
-    ses_tonu = st.selectbox("Ses Tonu", ["Samimi (Emojili)", "Lüks ve Kurumsal", "Kısa ve Öz"])
+    ses_tonu = st.selectbox(dil['ton'], ["Energetic & Emoji", "Luxury & Corporate", "Short & Direct"])
 with col3:
-    hedef_dil = st.selectbox("Dil", ["Türkçe", "İngilizce", "Arapça", "Rusça", "Almanca", "İspanyolca", "Fransızca"])
+    hedef_dil = st.selectbox(dil['cikti_dili'], ["Türkçe", "English", "Arabic", "Russian", "German", "Spanish", "French"])
 
-urun_adi = st.text_input("Ürün Adı", placeholder="Örn: Modern Venedik Koltuk Takımı")
-fiyat = st.text_input("Fiyat", placeholder="Örn: 45.000 TL / 1200 Euro")
-ozellikler = st.text_area("Özellikler", placeholder="Örn: Silinebilir kadife kumaş, ceviz ayak...")
+st.markdown(f"### {dil['urun_detay']}")
+urun_adi = st.text_input(dil['urun_adi'])
+fiyat = st.text_input(dil['fiyat'])
+ozellikler = st.text_area(dil['ozellikler'])
 
-if st.button("🚀 Akıllı Reklam Metni Oluştur"):
+# 7. İşlem Motoru
+if st.button(dil['buton_uret']):
     if urun_adi and fiyat:
-        with st.spinner("Yapay zeka sihrini konuşturuyor..."):
-            emir = f"Sen Türkiye'den dünyaya ihracat yapan vizyoner bir mobilya pazarlama uzmanısın. Ürün: {urun_adi}. Fiyat: {fiyat}. Özellikler: {ozellikler}. Bu metni kesinlikle {hedef_dil} dilinde, '{platform}' formatında ve '{ses_tonu}' üslubunda yaz."
-            if platform == "Instagram Gönderisi":
-                emir += " Metnin sonuna popüler mobilya hashtagleri ekle."
+        with st.spinner(dil['bekle']):
+            emir = f"You are a visionary marketing expert making global sales. Product: {urun_adi}. Price: {fiyat}. Specs: {ozellikler}. Write this content strictly in {hedef_dil} language, suitable for '{platform}' format, and with a '{ses_tonu}' tone."
+            if platform == "Instagram":
+                emir += " Include popular relevant hashtags at the end."
             elif platform == "WhatsApp":
-                emir += " Doğrudan müşteriye hitap eden, samimi bir sohbet formatında olsun. Hashtag kullanma."
+                emir += " Make it a direct, polite message to a customer without hashtags."
 
             if resim is not None:
-                emir += " Ayrıca fotoğrafı incele; renk, tarz ve doku analizini metne profesyonelce yedir."
+                emir += " Also analyze the provided image; perfectly blend the color, style, and texture details into the marketing copy."
                 cevap = model.generate_content([emir, resim])
             else:
                 cevap = model.generate_content(emir)
             
-            st.success(f"✨ İşlem Tamamlandı!")
+            st.success(dil['basari'])
             st.write(cevap.text)
             
             st.download_button(
-                label="📥 Metni Dosya Olarak İndir",
+                label=dil['buton_indir'],
                 data=cevap.text,
-                file_name=f"reklam_{hedef_dil.lower()}.txt",
+                file_name=f"content_{hedef_dil.lower()}.txt",
                 mime="text/plain"
             )
     else:
-        st.warning("Lütfen Ürün Adı ve Fiyat bilgilerini doldurun!")
+        st.warning(dil['hata'])
