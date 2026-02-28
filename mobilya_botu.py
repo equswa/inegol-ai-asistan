@@ -65,7 +65,7 @@ with col_baslik:
     st.title("İnegöl AI Asistan PRO")
     
 st.markdown("<p style='text-align: left; color: #7f8c8d; font-size: 16px; margin-top: -15px;'>Yapay zeka destekli profesyonel pazarlama metinleri saniyeler içinde hazır.</p>", unsafe_allow_html=True)
-st.markdown("---"))
+st.markdown("---")
 
 # 4. Fotoğraf Yükleme Alanı
 yuklenen_fotograf = st.file_uploader("📸 Mobilyanın Fotoğrafını Yükleyin (İsteğe Bağlı)", type=["jpg", "jpeg", "png"])
@@ -121,4 +121,5 @@ if st.button("🚀 Akıllı Reklam Metni Oluştur"):
             )
     else:
         st.warning("Lütfen Ürün Adı ve Fiyat bilgilerini doldurun!")
+
 
