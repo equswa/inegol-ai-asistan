@@ -7,76 +7,109 @@ api_anahtarim = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=api_anahtarim)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-# 2. Sayfa Tasarımı
-st.set_page_config(page_title="İnegöl AI Asistan Pro", page_icon="🛋️")
+# 2. Sayfa Tasarımı ve YENİ: CSS ile Makyajlama
+st.set_page_config(page_title="İnegöl AI Asistan Pro", page_icon="🛋️", layout="centered")
+
+# CSS Kodlarımızı Uygulamaya Enjekte Ediyoruz
+st.markdown("""
+<style>
+    /* Arka plan rengini hafif ve modern bir gri yapalım */
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    
+    /* Ana Başlık Tasarımı */
+    h1 {
+        color: #2c3e50;
+        font-family: 'Helvetica Neue', sans-serif;
+        text-align: center;
+    }
+    
+    /* Oluştur Butonunun Tasarımı (Bordo/Kırmızı Tonları - İnegöl Mobilyasına Uygun Lüks Hissiyat) */
+    div.stButton > button:first-child {
+        background-color: #8b0000;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 10px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    
+    /* Butonun üzerine mouse ile gelindiğinde olacaklar */
+    div.stButton > button:first-child:hover {
+        background-color: #a52a2a;
+        transform: scale(1.02);
+    }
+    
+    /* İndirme Butonunun Tasarımı (Yeşil Tonları) */
+    div.stDownloadButton > button:first-child {
+        background-color: #2e8b57;
+        color: white;
+        border-radius: 8px;
+        width: 100%;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 3. Başlık ve Karşılama
 st.title("🛋️ İnegöl AI Asistan PRO")
-st.write("Ürün bilgilerinizi girin, fotoğraf yükleyin ve hedef pazarınızı seçin. Yapay zeka gerisini halletsin!")
+st.markdown("<p style='text-align: center; color: #7f8c8d; font-size: 16px;'>Yapay zeka destekli profesyonel pazarlama metinleri saniyeler içinde hazır.</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# 3. Fotoğraf Yükleme Alanı
+# 4. Fotoğraf Yükleme Alanı
 yuklenen_fotograf = st.file_uploader("📸 Mobilyanın Fotoğrafını Yükleyin (İsteğe Bağlı)", type=["jpg", "jpeg", "png"])
 
 resim = None
 if yuklenen_fotograf is not None:
     resim = Image.open(yuklenen_fotograf)
-    st.image(resim, caption="Yüklenen Fotoğraf", use_container_width=True)
+    # Fotoğrafın köşelerini yumuşatarak şık göstermek için CSS ayarı
+    st.image(resim, caption="Analiz Edilecek Görsel", use_container_width=True)
 
-# 4. Açılır Menüler (Platform, Ses Tonu ve YENİ: Dil)
-st.markdown("### 🎯 Hedef Kitle, Platform ve Dil")
-col1, col2, col3 = st.columns(3) # Ekranı bu sefer 3 eşit parçaya böldük
+# 5. Açılır Menüler
+st.markdown("### 🎯 Strateji Belirleme")
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    platform = st.selectbox("Nerede Paylaşacaksınız?", 
-                            ["Instagram Gönderisi", "WhatsApp Müşteri Yanıtı", "Sahibinden / E-Ticaret"])
+    platform = st.selectbox("Platform", ["Instagram Gönderisi", "WhatsApp", "Sahibinden/Web"])
 with col2:
-    ses_tonu = st.selectbox("Nasıl Bir Dil Kullanılsın?", 
-                            ["Samimi ve Enerjik (Emojili)", "Lüks ve Kurumsal", "Kısa ve Öz"])
+    ses_tonu = st.selectbox("Ses Tonu", ["Samimi (Emojili)", "Lüks ve Kurumsal", "Kısa ve Öz"])
 with col3:
-    hedef_dil = st.selectbox("Hangi Dilde Yazılsın?", 
-                             ["Türkçe", "İngilizce (Avrupa/ABD)", "Arapça (Orta Doğu)", "Rusça (Rusya/Türki Cumhuriyetler)"])
+    hedef_dil = st.selectbox("Dil", ["Türkçe", "İngilizce", "Arapça", "Rusça"])
 
-st.markdown("### 📝 Ürün Detayları (Türkçe Girebilirsiniz)")
-# 5. Kullanıcıdan Bilgi Alma
-urun_adi = st.text_input("Ürün Adı", placeholder="Örn: Lüks Chester Takım")
-fiyat = st.text_input("Fiyat", placeholder="Örn: 45.000 TL / 1500 USD")
-ozellikler = st.text_area("Ek Özellikler (Varsa)", placeholder="Örn: Leke tutmaz kumaş, fırınlanmış gürgen iskelet")
+st.markdown("### 📝 Ürün Detayları")
+urun_adi = st.text_input("Ürün Adı", placeholder="Örn: Modern Venedik Koltuk Takımı")
+fiyat = st.text_input("Fiyat", placeholder="Örn: 45.000 TL")
+ozellikler = st.text_area("Özellikler", placeholder="Örn: Silinebilir kadife kumaş, ceviz ayak...")
 
-# 6. İşlem Butonu
+# 6. İşlem Butonu ve Çıktı
 if st.button("🚀 Akıllı Reklam Metni Oluştur"):
     if urun_adi and fiyat:
-        with st.spinner(f"Yapay zeka analiz ediyor ve {hedef_dil} dilinde metni yazıyor, lütfen bekleyin..."):
+        with st.spinner("Yapay zeka sihrini konuşturuyor..."):
             
-            # Dinamik Emrimiz (Prompt)
-            emir = f"Sen Türkiye'den tüm dünyaya ihracat yapan çok başarılı bir mobilya markası yöneticisisin. "
-            emir += f"Ürün: {urun_adi}. Fiyat: {fiyat}. Özellikler: {ozellikler}. "
-            
-            # Seçilen platform, ton ve DİL ayarlamaları
-            emir += f"\n\nÖNEMLİ GÖREV: Bu metni KESİNLİKLE {hedef_dil} dilinde yaz. "
-            emir += f"Formatı bir '{platform}' formatına uygun olmalı. "
-            emir += f"Üslup ve ses tonu tam olarak '{ses_tonu}' olmalı. {hedef_dil} dilinin kültürel pazarlama dinamiklerine ve doğal söyleyiş biçimlerine dikkat et. Asla makine çevirisi gibi durmasın, o dili ana dili gibi konuşan bir satış uzmanı yazmış gibi olsun."
+            emir = f"Sen Türkiye'den dünyaya ihracat yapan vizyoner bir mobilya pazarlama uzmanısın. Ürün: {urun_adi}. Fiyat: {fiyat}. Özellikler: {ozellikler}. Bu metni kesinlikle {hedef_dil} dilinde, '{platform}' formatında ve '{ses_tonu}' üslubunda yaz."
             
             if platform == "Instagram Gönderisi":
-                emir += f" Metnin sonuna o dilde popüler olan mobilya ve dekorasyon hashtagleri ekle."
-            elif platform == "WhatsApp Müşteri Yanıtı":
-                emir += " Metin doğrudan müşteriye hitap eden, kısa bir mesaj formatında olsun. Hashtag kullanma."
+                emir += " Metnin sonuna popüler mobilya hashtagleri ekle."
+            elif platform == "WhatsApp":
+                emir += " Doğrudan müşteriye hitap eden, samimi bir sohbet formatında olsun."
 
-            # Eğer fotoğraf yüklendiyse
             if resim is not None:
-                emir += " Ayrıca sana gönderdiğim bu mobilya fotoğrafını detaylıca incele. Rengini, tarzını, kumaş dokusunu ve malzeme yapısını analiz et. Bu görsel detayları da metne mükemmel bir şekilde yedir."
+                emir += " Ayrıca sana gönderdiğim fotoğrafı incele; renk, tarz ve doku analizini metne profesyonelce yedir."
                 cevap = model.generate_content([emir, resim])
             else:
                 cevap = model.generate_content(emir)
             
-            # Sonucu Göster
-            st.success(f"İşte {hedef_dil} dilindeki profesyonel metniniz:")
+            st.success("✨ İşlem Tamamlandı!")
             st.write(cevap.text)
             
-            # YENİ BÖLÜM: Metni İndirme Butonu
             st.download_button(
                 label="📥 Metni Dosya Olarak İndir",
                 data=cevap.text,
-                file_name="yapay_zeka_reklam_metni.txt",
+                file_name="reklam_metni.txt",
                 mime="text/plain"
             )
     else:
-        st.warning("Lütfen en azından Ürün Adı ve Fiyat bilgilerini doldurun!")
+        st.warning("Lütfen Ürün Adı ve Fiyat bilgilerini doldurun!")
