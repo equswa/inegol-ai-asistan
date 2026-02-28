@@ -54,10 +54,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 3. Başlık ve Karşılama
-st.title("🛋️ İnegöl AI Asistan PRO")
-st.markdown("<p style='text-align: center; color: #7f8c8d; font-size: 16px;'>Yapay zeka destekli profesyonel pazarlama metinleri saniyeler içinde hazır.</p>", unsafe_allow_html=True)
-st.markdown("---")
+# 3. YENİ BÖLÜM: Logo ve Başlık Yan Yana
+col_logo, col_baslik = st.columns([1, 5]) # Ekranı 1'e 5 oranında ikiye böldük
+
+with col_logo:
+    # İnternetten şık bir mobilya ikonu çekiyoruz (Bunu sonra kendi logonla değiştirebilirsin)
+    st.image("https://cdn-icons-png.flaticon.com/512/3303/3303100.png", width=80)
+
+with col_baslik:
+    st.title("İnegöl AI Asistan PRO")
+    
+st.markdown("<p style='text-align: left; color: #7f8c8d; font-size: 16px; margin-top: -15px;'>Yapay zeka destekli profesyonel pazarlama metinleri saniyeler içinde hazır.</p>", unsafe_allow_html=True)
+st.markdown("---"))
 
 # 4. Fotoğraf Yükleme Alanı
 yuklenen_fotograf = st.file_uploader("📸 Mobilyanın Fotoğrafını Yükleyin (İsteğe Bağlı)", type=["jpg", "jpeg", "png"])
@@ -113,3 +121,4 @@ if st.button("🚀 Akıllı Reklam Metni Oluştur"):
             )
     else:
         st.warning("Lütfen Ürün Adı ve Fiyat bilgilerini doldurun!")
+
