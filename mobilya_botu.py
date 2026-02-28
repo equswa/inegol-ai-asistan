@@ -7,10 +7,10 @@ api_anahtarim = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=api_anahtarim)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-# 2. Sayfa Ayarları
+# 2. Sayfa Ayarları (Sayfayı biraz daha genişlettik)
 st.set_page_config(page_title="AI Marketing Pro", page_icon="⬛", layout="centered")
 
-# 3. YENİ: Arayüz Dili Sözlüğü (Uygulamanın Kendi Dili)
+# 3. Arayüz Dili Sözlüğü
 arayuz_dilleri = {
     "Türkçe": {
         "ayar_baslik": "⚙️ SİSTEM AYARLARI",
@@ -62,97 +62,98 @@ arayuz_dilleri = {
     }
 }
 
-# Sol Menü - Arayüz Dili Seçimi
+# Sol Menü
 st.sidebar.markdown("### 🌐 GLOBAL")
 secilen_arayuz = st.sidebar.selectbox("Arayüz Dili / App Language", ["Türkçe", "English"])
-dil = arayuz_dilleri[secilen_arayuz] # Seçilen dile göre kelimeleri çekiyoruz
+dil = arayuz_dilleri[secilen_arayuz]
 
-# Sol Menü - Kurumsal Kimlik Ayarları
 st.sidebar.markdown(f"### {dil['tema_baslik']}")
 logo_linki = st.sidebar.text_input(dil['logo'], "https://cdn-icons-png.flaticon.com/512/3303/3303100.png")
 arkaplan_resmi = st.sidebar.text_input(dil['arka_plan'], placeholder="https://...")
-vurgu_rengi = st.sidebar.color_picker(dil['renk_yazi'], "#1a252f") # Varsayılan: Keskin koyu lacivert/gri
+vurgu_rengi = st.sidebar.color_picker(dil['renk_yazi'], "#1a252f")
 
-# 4. KESKİN, MODERN VE KURUMSAL CSS
+# 4. DÜZELTİLMİŞ CSS: İkonları bozmayan ve nefes alan tasarım
 bg_css = f"background-image: url('{arkaplan_resmi}'); background-size: cover; background-attachment: fixed; background-position: center;" if arkaplan_resmi else f"background-color: #eaeced;"
 
 st.markdown(f"""
 <style>
-    /* Keskin Arka Plan */
+    /* Arka Plan */
     .stApp {{
         {bg_css}
     }}
     
-    /* Genel Font Ailesi: Modern, tırnaksız ve net */
-    html, body, [class*="st-"] {{
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    /* FONT DÜZELTMESİ: Sol üstteki ikonları bozmamak için sadece yazıları hedefliyoruz */
+    p, h1, h2, h3, h4, label, input, textarea, .stMarkdown {{
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }}
     
-    /* İçerik Kutusu - Keskin Hatlar ve Kurumsal Çizgi */
+    /* İÇ İÇE GİRME DÜZELTMESİ: Kutuya üstten boşluk (margin/padding) vererek butonlardan uzaklaştırdık */
     .block-container {{
-        background-color: rgba(255, 255, 255, 0.96);
+        background-color: rgba(255, 255, 255, 0.95);
         padding: 3rem;
-        border-radius: 0px; /* Yuvarlak hatlar iptal edildi, keskin yapıldı */
-        box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
-        border-top: 6px solid {vurgu_rengi}; /* Üstte şık kurumsal renk çizgisi */
+        padding-top: 4.5rem !important; /* Sol üstteki menü butonuna yer açar */
+        margin-top: 2rem; /* Sayfayı üstten biraz aşağı iter */
+        max-width: 850px; /* Kutunun genişliğini derli toplu yapar */
+        border-radius: 4px; /* Hafif yumuşatılmış keskinlik */
+        box-shadow: 0px 15px 40px rgba(0,0,0,0.15); /* Derinlik veren gölge */
+        border-top: 6px solid {vurgu_rengi}; 
     }}
 
     /* Başlıklar */
     h1 {{
         color: {vurgu_rengi};
         text-transform: uppercase;
-        letter-spacing: 2px;
+        letter-spacing: 1.5px;
         font-weight: 800;
-        font-size: 28px !important;
+        font-size: 26px !important;
+        margin-bottom: 0px;
     }}
     h3 {{
         color: #34495e;
-        font-size: 16px !important;
+        font-size: 15px !important;
         text-transform: uppercase;
         letter-spacing: 1px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 2px solid #f0f2f5; /* Çizgiyi yumuşattık */
         padding-bottom: 8px;
-        margin-top: 20px;
+        margin-top: 30px; /* Bölümler arasına nefes alma payı */
     }}
 
-    /* Keskin Aksiyon Butonu */
+    /* Aksiyon Butonu */
     div.stButton > button:first-child {{
         background-color: {vurgu_rengi};
         color: white !important;
-        border-radius: 0px; /* Keskin köşeler */
+        border-radius: 2px;
         border: none;
         padding: 12px 24px;
         font-size: 16px;
         font-weight: 700;
         letter-spacing: 1px;
         width: 100%;
-        transition: background-color 0.2s;
+        margin-top: 20px; /* Butonu yukarıdan ayırdık */
+        transition: background-color 0.3s;
     }}
     div.stButton > button:first-child:hover {{
         background-color: #2c3e50;
     }}
     
-    /* Keskin İndirme Butonu */
-    div.stDownloadButton > button:first-child {{
-        background-color: #27ae60;
-        color: white;
-        border-radius: 0px;
-        font-weight: 600;
-        width: 100%;
+    /* Sol Menü Başlık Çizgisini Kaldırma (Daha temiz görünüm için) */
+    section[data-testid="stSidebar"] h3 {{
+        border-bottom: none;
+        margin-top: 15px;
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# 5. Logo ve Başlık Düzeni
+# 5. Başlık ve İçerik Düzeni
 col_logo, col_baslik = st.columns([1, 6])
 with col_logo:
     if logo_linki:
-        st.image(logo_linki, width=70)
+        st.image(logo_linki, width=75)
 with col_baslik:
     st.markdown(f"<h1>{dil['baslik']}</h1>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: #7f8c8d; font-size: 14px; margin-top: -15px;'>{dil['alt_baslik']}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: #7f8c8d; font-size: 14px; margin-top: -10px;'>{dil['alt_baslik']}</p>", unsafe_allow_html=True)
 
-# 6. Uygulamanın Ana Gövdesi (Arayüz artık seçilen dile göre değişir)
+# 6. Uygulama Ana Gövdesi
 yuklenen_fotograf = st.file_uploader(dil['foto_yukle'], type=["jpg", "jpeg", "png"])
 resim = None
 if yuklenen_fotograf is not None:
