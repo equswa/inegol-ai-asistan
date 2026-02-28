@@ -7,26 +7,26 @@ api_anahtarim = st.secrets["GOOGLE_API_KEY"]
 genai.configure(api_key=api_anahtarim)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-# 2. Sayfa Tasarımı ve YENİ: CSS ile Makyajlama
+# 2. Sayfa Ayarları
 st.set_page_config(page_title="İnegöl AI Asistan Pro", page_icon="🛋️", layout="centered")
 
-# CSS Kodlarımızı Uygulamaya Enjekte Ediyoruz
-st.markdown("""
+# YENİ: Marka Rengi Seçici (Sol tarafa şık bir yan menü açıyoruz)
+st.sidebar.markdown("### 🎨 Tema Ayarları")
+st.sidebar.write("Uygulamanın arka plan rengini markanıza göre özelleştirin:")
+secilen_renk = st.sidebar.color_picker("Arka Plan Rengi", "#f8f9fa")
+
+# CSS Kodlarımızı Dinamik Renkle Enjekte Ediyoruz (Seçilen renk anında buraya işlenir)
+st.markdown(f"""
 <style>
-    /* Arka plan rengini hafif ve modern bir gri yapalım */
-    .stApp {
-        background-color: #f8f9fa;
-    }
-    
-    /* Ana Başlık Tasarımı */
-    h1 {
+    .stApp {{
+        background-color: {secilen_renk};
+    }}
+    h1 {{
         color: #2c3e50;
         font-family: 'Helvetica Neue', sans-serif;
         text-align: center;
-    }
-    
-    /* Oluştur Butonunun Tasarımı (Bordo/Kırmızı Tonları - İnegöl Mobilyasına Uygun Lüks Hissiyat) */
-    div.stButton > button:first-child {
+    }}
+    div.stButton > button:first-child {{
         background-color: #8b0000;
         color: white;
         border-radius: 8px;
@@ -36,31 +36,24 @@ st.markdown("""
         font-weight: bold;
         width: 100%;
         transition: all 0.3s;
-    }
-    
-    /* Butonun üzerine mouse ile gelindiğinde olacaklar */
-    div.stButton > button:first-child:hover {
+    }}
+    div.stButton > button:first-child:hover {{
         background-color: #a52a2a;
         transform: scale(1.02);
-    }
-    
-    /* İndirme Butonunun Tasarımı (Yeşil Tonları) */
-    div.stDownloadButton > button:first-child {
+    }}
+    div.stDownloadButton > button:first-child {{
         background-color: #2e8b57;
         color: white;
         border-radius: 8px;
         width: 100%;
-    }
+    }}
 </style>
 """, unsafe_allow_html=True)
 
-# 3. YENİ BÖLÜM: Logo ve Başlık Yan Yana
-col_logo, col_baslik = st.columns([1, 5]) # Ekranı 1'e 5 oranında ikiye böldük
-
+# 3. Logo ve Başlık Yan Yana
+col_logo, col_baslik = st.columns([1, 5])
 with col_logo:
-    # İnternetten şık bir mobilya ikonu çekiyoruz (Bunu sonra kendi logonla değiştirebilirsin)
     st.image("https://cdn-icons-png.flaticon.com/512/3303/3303100.png", width=80)
-
 with col_baslik:
     st.title("İnegöl AI Asistan PRO")
     
@@ -73,10 +66,9 @@ yuklenen_fotograf = st.file_uploader("📸 Mobilyanın Fotoğrafını Yükleyin 
 resim = None
 if yuklenen_fotograf is not None:
     resim = Image.open(yuklenen_fotograf)
-    # Fotoğrafın köşelerini yumuşatarak şık göstermek için CSS ayarı
     st.image(resim, caption="Analiz Edilecek Görsel", use_container_width=True)
 
-# 5. Açılır Menüler
+# 5. Açılır Menüler (YENİ DİLLER EKLENDİ)
 st.markdown("### 🎯 Strateji Belirleme")
 col1, col2, col3 = st.columns(3)
 
@@ -85,11 +77,11 @@ with col1:
 with col2:
     ses_tonu = st.selectbox("Ses Tonu", ["Samimi (Emojili)", "Lüks ve Kurumsal", "Kısa ve Öz"])
 with col3:
-    hedef_dil = st.selectbox("Dil", ["Türkçe", "İngilizce", "Arapça", "Rusça"])
+    hedef_dil = st.selectbox("Dil", ["Türkçe", "İngilizce", "Arapça", "Rusça", "Almanca", "İspanyolca", "Fransızca"])
 
 st.markdown("### 📝 Ürün Detayları")
 urun_adi = st.text_input("Ürün Adı", placeholder="Örn: Modern Venedik Koltuk Takımı")
-fiyat = st.text_input("Fiyat", placeholder="Örn: 45.000 TL")
+fiyat = st.text_input("Fiyat", placeholder="Örn: 45.000 TL / 1200 Euro")
 ozellikler = st.text_area("Özellikler", placeholder="Örn: Silinebilir kadife kumaş, ceviz ayak...")
 
 # 6. İşlem Butonu ve Çıktı
@@ -102,7 +94,7 @@ if st.button("🚀 Akıllı Reklam Metni Oluştur"):
             if platform == "Instagram Gönderisi":
                 emir += " Metnin sonuna popüler mobilya hashtagleri ekle."
             elif platform == "WhatsApp":
-                emir += " Doğrudan müşteriye hitap eden, samimi bir sohbet formatında olsun."
+                emir += " Doğrudan müşteriye hitap eden, samimi bir sohbet formatında olsun. Hashtag kullanma."
 
             if resim is not None:
                 emir += " Ayrıca sana gönderdiğim fotoğrafı incele; renk, tarz ve doku analizini metne profesyonelce yedir."
@@ -110,16 +102,14 @@ if st.button("🚀 Akıllı Reklam Metni Oluştur"):
             else:
                 cevap = model.generate_content(emir)
             
-            st.success("✨ İşlem Tamamlandı!")
+            st.success(f"✨ {hedef_dil} İşlem Tamamlandı!")
             st.write(cevap.text)
             
             st.download_button(
                 label="📥 Metni Dosya Olarak İndir",
                 data=cevap.text,
-                file_name="reklam_metni.txt",
+                file_name=f"reklam_metni_{hedef_dil.lower()}.txt",
                 mime="text/plain"
             )
     else:
         st.warning("Lütfen Ürün Adı ve Fiyat bilgilerini doldurun!")
-
-
