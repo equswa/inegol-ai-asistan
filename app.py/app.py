@@ -1,4 +1,14 @@
 import streamlit as st
+import google.generativeai as genai
+
+# API Anahtarını güvenli yerden al
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
+except:
+    st.error("API Anahtarı bulunamadı! Lütfen Secrets ayarlarını yapın.")
+
+import streamlit as st
 
 # Sayfa Yapılandırması
 st.set_page_config(page_title="AI İş Çözümleri Merkezi", layout="wide")
@@ -54,4 +64,5 @@ if lux_img:
         clip.write_videofile("cikti.mp4", fps=24, codec="libx264")
         
         st.video("cikti.mp4")
+
         st.success("Video başarıyla oluşturuldu!")
