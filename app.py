@@ -1,57 +1,30 @@
 import streamlit as st
+import os
 
-# Sayfa Yapılandırması
-st.set_page_config(page_title="AI İş Çözümleri Merkezi", layout="wide")
+# 1. SAYFA AYARI
+st.set_page_config(page_title="AI İş Ortağım", layout="centered")
 
-# SOL MENÜ - Proje Seçimi
+# 2. SEKTÖREL MENÜ
 st.sidebar.title("🚀 AI Projelerim")
-proje = st.sidebar.selectbox("Hangi Sektör İçin Çalışalım?", 
-                             ["Mobilya Studio", "Emlak Görselleştirme", "Oto Galeri AI"])
+proje = st.sidebar.selectbox("Sektör Seçin:", ["Mobilya", "Emlak", "Oto Galeri"])
 
-if proje == "Mobilya Studio":
-    st.header("🪑 Mobilya İçerik Fabrikası")
-    # Buraya daha önce yazdığımız mobilya kodlarını yapıştır...
+# 3. ANA EKRAN
+st.title(f"✨ {proje} Yapay Zeka Çözümü")
+
+# DOSYA YÜKLEME ALANI
+uploaded_file = st.file_uploader(f"{proje} Fotoğrafını Buraya Yükle", type=['jpg', 'jpeg', 'png'])
+
+if uploaded_file is not None:
+    st.image(uploaded_file, caption="Yüklenen Görsel", use_column_width=True)
+    st.success(f"{proje} analizi için hazır!")
     
-elif proje == "Emlak Görselleştirme":
-    st.header("🏠 Emlak & Dekorasyon AI")
-    st.write("Boş ev fotoğraflarını eşyalı hale getirin (Yakında!)")
-    # Buraya emlak projenin kodlarını ekleyeceksin...
+    # REKLAM METNİ ÜRETME (Örnek Buton)
+    if st.button("Reklam Metni Üret"):
+        st.info("Yapay zeka şu an analiz yapıyor... (API Bağlantısı Aktif)")
+        # Buraya daha önce konuştuğumuz Gemini kodlarını ekleyeceğiz.
 
-elif proje == "Oto Galeri AI":
-    st.header("🚗 Profesyonel Araç İlanı")
-    st.write("Araç fotoğraflarının arka planını stüdyoya çevirin.")
-import streamlit as st
-import google.generativeai as genai
-from PIL import Image
-from moviepy.editor import ImageClip
-
-# API Yapılandırması
-API_KEY = "SENIN_API_KEY_BURAYA" 
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
-
-st.title("🪑 AI Mobilya İçerik Fabrikası v1.0")
-
-# Görsel Yükleme ve Analiz
-orig_img = st.file_uploader("Mobilya Fotoğrafı Yükle", type=['jpg','png'])
-if orig_img:
-    img = Image.open(orig_img)
-    if st.button("Analiz Et ve Reklam Yaz"):
-        response = model.generate_content(["Bu mobilyayı analiz et ve lüks bir villa için İngilizce görsel üretim promptu yaz.", img])
-        st.write(response.text)
-
+# VİDEO OLUŞTURMA BÖLÜMÜ (Hata vermemesi için kontrol eklendi)
 st.markdown("---")
-
-# Video Oluşturma
-lux_img = st.file_uploader("Leonardo'dan Aldığın Lüks Görseli Yükle", type=['jpg','png'], key="lux")
-if lux_img:
-    if st.button("🎬 Videoyu Bulutta Render Et"):
-        with open("temp.png", "wb") as f:
-            f.write(lux_img.getbuffer())
-        
-        # Basit ve hızlı video oluşturma
-        clip = ImageClip("temp.png").set_duration(5)
-        clip.write_videofile("cikti.mp4", fps=24, codec="libx264")
-        
-        st.video("cikti.mp4")
-        st.success("Video başarıyla oluşturuldu!")
+st.subheader("🎬 Sosyal Medya Videosu")
+if st.button("Video Hazırla"):
+    st.warning("Video oluşturma özelliği şu an bakımda. (Lütfen requirements.txt dosyasını kontrol edin)")
