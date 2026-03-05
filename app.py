@@ -7,7 +7,7 @@ st.set_page_config(page_title="AI İş Ortağım", layout="wide")
 
 # API Anahtarını Streamlit Secrets'tan alacağız
 try:
-    api_key = st.secrets["GEMINI_API_KEY"]
+    api_key = st.secrets["AIzaSyCqyzabnJT31c0iNaAqb5Y5JSs0VuAXS0Y"]
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 except:
@@ -40,3 +40,4 @@ if uploaded_file:
                 response = model.generate_content([prompt, img])
 
                 st.write(response.text)
+
