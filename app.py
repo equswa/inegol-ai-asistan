@@ -31,5 +31,5 @@ if foto:
                 st.success("✅ İŞLEM BAŞARILI!")
                 st.write(response.text)
             except Exception as e:
-                st.error("Bir sorun oluştu.")
+                st.error("Bir sorun oluştu. Detay aşağıda:")
                 st.code(str(e)) # Hatayı kutu içinde gösterir
