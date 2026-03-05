@@ -1,4 +1,3 @@
-app.py
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
@@ -39,4 +38,5 @@ if uploaded_file:
                 # Sektöre göre özel komut gönderiyoruz
                 prompt = f"Sen profesyonel bir {sektor} pazarlama uzmanısın. Bu görseldeki ürünü analiz et ve Instagram için etkileyici bir reklam metni yaz."
                 response = model.generate_content([prompt, img])
+
                 st.write(response.text)
