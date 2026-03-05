@@ -3,7 +3,7 @@ import google.generativeai as genai
 from PIL import Image
 
 # 1. API ANAHTARIN (Tırnak içine yaz)
-API_KEY = "BURAYA_KENDI_API_KEYINI_YAZ"
+API_KEY = "AIzaSyCqyzabnJT31c0iNaAqb5Y5JSs0VuAXS0Y"
 
 # Başlık ve Ayarlar
 st.set_page_config(page_title="İnegöl AI Asistan", layout="centered")
@@ -31,6 +31,5 @@ if foto:
                 st.success("✅ İŞLEM BAŞARILI!")
                 st.write(response.text)
             except Exception as e:
-                # Hata neyse burada açıkça göreceğiz
                 st.error("Bir sorun oluştu.")
-                st.code(str(e)) # Hatayı kod kutusunda gösterir
+                st.code(str(e)) # Hatayı kutu içinde gösterir
