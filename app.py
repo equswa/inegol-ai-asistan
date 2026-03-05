@@ -2,38 +2,37 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# 1. API ANAHTARI - BURAYI GÜNCELLE
+# 1. API ANAHTARI
 API_KEY = "AIzaSyBb4SsVo6SfaQ6nwrRyb3--QlnMvDsOCP0"
 
+st.set_page_config(page_title="İnegöl AI Portalı", layout="wide")
 
-# Gemini Ayarları
+# API Yapılandırması
 try:
     genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
-    st.error(f"Kurulum Hatası: {e}")
+    st.error("API Bağlantı Hatası!")
 
-st.set_page_config(page_title="İnegöl AI Asistan", layout="wide")
 st.title("🚀 İnegöl Sektörel AI Paneli")
 
-# Yan Menü
-sektor = st.sidebar.selectbox("Sektör Seçin:", ["Mobilya", "Emlak", "Oto Galeri"])
-
-# Dosya Yükleme
-uploaded_file = st.file_uploader(f"{sektor} Fotoğrafı Yükle", type=['jpg', 'jpeg', 'png'])
+sektor = st.sidebar.selectbox("Sektör:", ["Mobilya", "Emlak", "Oto Galeri"])
+uploaded_file = st.file_uploader("Fotoğraf Yükle", type=['jpg', 'jpeg', 'png'])
 
 if uploaded_file:
     img = Image.open(uploaded_file)
-    st.image(img, caption="Yüklenen Görsel", width=400)
+    st.image(img, width=400)
     
     if st.button("Reklam Yaz"):
-        with st.spinner("Yapay zeka analiz ediyor..."):
+        with st.spinner("Analiz ediliyor..."):
+            # ÇÖZÜM BURADA: Önce Flash modelini dene, olmazsa Pro modeline geç
             try:
-                # Prompt ve Görseli Liste Olarak Gönderiyoruz (En Garanti Yol)
-                prompt = f"Sen bir {sektor} pazarlama uzmanısın. Bu görseli analiz et ve etkileyici bir reklam metni yaz."
-                response = model.generate_content([prompt, img])
-                
-                st.success("Analiz Tamamlandı!")
-                st.write(response.text)
-            except Exception as e:
-                st.error(f"Hata detayı: {e}")
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                response = model.generate_content(["Bu görsel için reklam metni yaz", img])
+                st.success(response.text)
+            except:
+                try:
+                    model = genai.GenerativeModel('gemini-pro-vision')
+                    response = model.generate_content(["Bu görsel için reklam metni yaz", img])
+                    st.success(response.text)
+                except Exception as e:
+                    st.error(f"Google servislerine şu an ulaşılamıyor. Hata: {e}")
