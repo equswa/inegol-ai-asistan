@@ -3,8 +3,8 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- API ANAHTARINI BURAYA YAZ (EN GARANTİ YOL) ---
-API_KEY_DOKUNMA = "AIzaSyBb4SsVo6SfaQ6nwrRyb3--QlnMvDsOCP0
-" 
+API_KEY_DOKUNMA = "AIzaSyBb4SsVo6SfaQ6nwrRyb3--QlnMvDsOCP0"
+ 
 genai.configure(api_key=API_KEY_DOKUNMA)
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 # --------------------------------------------------
@@ -51,4 +51,5 @@ if st.button("Analiz Et ve Metin Yaz"):
         except Exception as e:
             st.error(f"Bağlantı hatası oluştu: {e}")
             st.info("İpucu: API anahtarınızın aktif olduğundan ve internet bağlantınızın stabil olduğundan emin olun.")                
+
 
