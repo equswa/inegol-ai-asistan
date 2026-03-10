@@ -9,7 +9,7 @@ API_KEY = "AIzaSyBb4SsVo6SfaQ6nwrRyb3--QlnMvDsOCP0"
 # Yapılandırma
 try:
     genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
 except Exception as e:
     st.error(f"API Bağlantı Hatası: {e}")
 
@@ -60,4 +60,5 @@ if foto:
 # Alt Bilgi
 st.markdown("---")
 st.caption("İnegöl Mobilya Sektörü İçin Özel Olarak Geliştirilmiştir.")
+
 
