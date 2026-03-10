@@ -3,7 +3,8 @@ import google.generativeai as genai
 from PIL import Image
 
 # 1. API ANAHTARIN (Kendi anahtarını tırnak içine yaz)
-API_KEY = "AIzaSyCqyzabnJT31c0iNaAqb5Y5JSs0VuAXS0Y"
+API_KEY = "AIzaSyBb4SsVo6SfaQ6nwrRyb3--QlnMvDsOCP0"
+
 
 # Yapılandırma
 try:
@@ -59,3 +60,4 @@ if foto:
 # Alt Bilgi
 st.markdown("---")
 st.caption("İnegöl Mobilya Sektörü İçin Özel Olarak Geliştirilmiştir.")
+
